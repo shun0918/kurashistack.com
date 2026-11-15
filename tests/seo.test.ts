@@ -117,6 +117,20 @@ describe('OGP', () => {
   });
 });
 
+describe('クローラー向けのファイル', () => {
+  const locs = (xml: string) => [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+
+  test('sitemap に記事の URL が末尾スラッシュ付きで含まれ、404 ページは含まれないこと', () => {
+    const urls = locs(read('sitemap-index.xml')).flatMap((sitemap) => locs(read(new URL(sitemap).pathname)));
+    expect(urls).toEqual(expect.arrayContaining(POSTS.map(({ slug }) => `${SITE}/posts/${slug}/`)));
+    expect(urls.filter((url) => url.includes('404'))).toEqual([]);
+  });
+
+  test('robots.txt に sitemap の URL が書かれていること', () => {
+    expect(read('robots.txt').split('\n')).toContain(`Sitemap: ${SITE}/sitemap-index.xml`);
+  });
+});
+
 test.each([
   ['index.html', `${SITE}/`],
   ['posts/no-cover/index.html', `${SITE}/posts/no-cover/`],
