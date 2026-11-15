@@ -115,7 +115,7 @@ a:hover {
 .posts {
   max-width: 72rem;
   margin: 0 auto;
-  padding: 0 var(--gutter);
+  padding: 4.5rem var(--gutter) 0;
 }
 
 .posts h2 {

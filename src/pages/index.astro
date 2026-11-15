@@ -1,7 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
 import PostCard from '../components/PostCard.astro';
-import { SITE_TAGLINE } from '../consts';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const posts = (await getCollection('posts')).sort(
@@ -10,9 +9,6 @@ const posts = (await getCollection('posts')).sort(
 ---
 
 <BaseLayout>
-  <div class="hero">
-    <p class="hero-title">{SITE_TAGLINE.map((phrase) => <span>{phrase}</span>)}</p>
-  </div>
   <section class="posts">
     <h2>記事</h2>
     {
