@@ -1,0 +1,75 @@
+:root {
+  --bg: #F3F4F2;
+  --text: #1F2522;
+  --text-muted: #535B57;
+  --accent: #2F5D58;
+  --accent-strong: #1E3E3A;
+  --rule: #CDD2CD;
+  --rule-strong: #8E9792;
+  --mat: #D8DCD6;
+  --band: #E8EBE7;
+  --code-bg: #E3E7E2;
+  --notice-bg: #FFFFFF;
+  --notice-border: #B9C1BB;
+  --font-display: 'Zen Kaku Gothic Antique', sans-serif;
+  --font-body: 'Zen Kaku Gothic New', sans-serif;
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--accent);
+}
+
+a:hover {
+  color: var(--accent-strong);
+}
+
+.site-header {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 1.75rem var(--gutter);
+}
+
+.wordmark {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.16em;
+}
+
+.wordmark a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.site-footer {
+  margin-top: 7rem;
+  background: var(--band);
+}
+
+.site-footer p {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 3rem var(--gutter) 2.5rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
