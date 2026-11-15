@@ -131,6 +131,18 @@ describe('クローラー向けのファイル', () => {
   });
 });
 
+describe('RSS', () => {
+  test('RSS に記事が新しい順で並び、リンクが末尾スラッシュ付きの絶対 URL であること', () => {
+    const links = [...read('rss.xml').matchAll(/<item>[\s\S]*?<link>([^<]+)<\/link>/g)].map((match) => match[1]);
+    expect(links).toEqual(['no-cover', 'svg-cover', 'jpeg-cover'].map((slug) => `${SITE}/posts/${slug}/`));
+  });
+
+  test('トップページの時、head に RSS の URL が書かれていること', () => {
+    const link = tag(read('index.html'), 'link', 'type', 'application/rss\\+xml');
+    expect(link?.match(/href="([^"]*)"/)?.[1]).toBe(`${SITE}/rss.xml`);
+  });
+});
+
 test.each([
   ['index.html', `${SITE}/`],
   ['posts/no-cover/index.html', `${SITE}/posts/no-cover/`],
