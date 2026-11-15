@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-「暮らしの技術選定」（https://kurashistack.com）。ソフトウェアエンジニアが、要件と比較表で暮らしの道具（ガジェット・家電・生活ツール）を選ぶブログ。
+「暮らしの技術選定」（https://kurashistack.com）。ソフトウェアエンジニアのモノ（ガジェット・家電・生活ツール）の選定と意思決定のログ。
 Astro（静的出力）+ Cloudflare Workers Static Assets。広告・アフィリエイトで多少の収益化を狙う。
 
 ## このリポジトリは public

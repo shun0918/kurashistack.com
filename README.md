@@ -1,6 +1,6 @@
 # kurashistack.com
 
-「暮らしの技術選定」のソースコード。ソフトウェアエンジニアが、要件と比較表で暮らしの道具を選ぶブログ。
+「暮らしの技術選定」のソースコード。ソフトウェアエンジニアのモノの選定と意思決定のログ。
 
 - Astro (静的出力) + Cloudflare Workers Static Assets
 - 記事は `src/content/posts/<slug>/index.md`
