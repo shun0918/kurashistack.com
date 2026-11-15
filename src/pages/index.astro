@@ -1,9 +1,8 @@
 ---
-import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
+import PostCard from '../components/PostCard.astro';
 import { SITE_TAGLINE } from '../consts';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { formatDate } from '../lib/date';
 
 const posts = (await getCollection('posts')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
@@ -22,18 +21,7 @@ const posts = (await getCollection('posts')).sort(
       ) : (
         <div class="cards">
           {posts.map(({ id, data }) => (
-            <article class="card">
-              <a href={`/posts/${id}/`}>
-                {data.cover ? <Image class="cover" src={data.cover} alt="" /> : <div class="cover" />}
-                <div class="card-meta">
-                  {data.category && <span class="category">{data.category}</span>}
-                  <time datetime={data.pubDate.toISOString()}>{formatDate(data.pubDate)}</time>
-                  {data.pr && <span class="pr-tag">PR</span>}
-                </div>
-                <h3>{data.title}</h3>
-                <p>{data.description}</p>
-              </a>
-            </article>
+            <PostCard id={id} data={data} />
           ))}
         </div>
       )
