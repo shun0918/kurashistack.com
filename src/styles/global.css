@@ -328,6 +328,27 @@ a:hover {
   font-weight: 500;
 }
 
+.prose .contains-task-list {
+  padding-left: 0;
+  list-style: none;
+}
+
+.prose .task-list-item input {
+  appearance: none;
+  width: 1em;
+  height: 1em;
+  margin: 0 0.5em 0 0;
+  vertical-align: -0.125em;
+  border: 1px solid var(--rule-strong);
+  border-radius: 2px;
+}
+
+.prose .task-list-item input:checked {
+  border-color: var(--accent);
+  background: var(--accent) center / 80% no-repeat
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 8.5l3 3 6-7'/%3E%3C/svg%3E");
+}
+
 .prose em {
   font-style: normal;
   -webkit-text-emphasis: sesame var(--accent);
