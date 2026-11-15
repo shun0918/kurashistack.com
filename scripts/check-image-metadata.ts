@@ -21,7 +21,9 @@ for (const path of paths) {
 }
 
 if (failures.length > 0) {
-  console.error('画像にメタデータが残っている。exiftool -all= <ファイル> で消してから、もう一度コミットする。');
+  console.error(
+    '画像にメタデータが残っている。JPEG・PNG は exiftool -all= <ファイル>、SVG は該当する要素と属性を消してから、もう一度コミットする。',
+  );
   console.error(failures.join('\n'));
   process.exit(1);
 }
