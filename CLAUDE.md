@@ -16,6 +16,7 @@ Astro（静的出力）+ Cloudflare Workers Static Assets。広告・アフィ�
 
 - ホスティングは Cloudflare Workers Static Assets。Pages ではない（Cloudflare の新規推奨が Workers）。Vercel は Hobby プランが広告・アフィリエイト不可のため不採用
 - Worker スクリプトは持たない。SSR / アダプターは入れない
+- 独自ドメインはダッシュボードで Worker（`kurashistack-com`）に割り当てる。本番は kurashistack.com、PR のプレビューは preview.kurashistack.com の下。`wrangler.jsonc` の `routes` には書かない（二重管理を避けるため）。workers.dev は本番もプレビューも無効（同じサイトを別のホストで出さないため）
 - 記事は `.md` のみ（MDX なし）。素の Markdown で足りるうちは増やさない。リッチなアフィリエイト部品が必要になったら MDX 追加を検討
 - URL は末尾スラッシュあり（`trailingSlash: 'always'`）。公開後は変えない
 - 画像は記事と同じフォルダに置く（`posts/<slug>/index.md` + `cover.jpg`）
