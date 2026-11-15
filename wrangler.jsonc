@@ -1,7 +1,9 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "kurashistack",
+  "name": "kurashistack-com",
   "compatibility_date": "2026-11-13",
+  "workers_dev": false,
+  "previews": {},
   "assets": {
     "directory": "./dist",
     "html_handling": "force-trailing-slash",
