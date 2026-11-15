@@ -13,9 +13,6 @@ const posts = (await getCollection('posts')).sort(
 <BaseLayout>
   <div class="hero">
     <p class="hero-title">{SITE_TAGLINE.map((phrase) => <span>{phrase}</span>)}</p>
-    <p class="hero-text">
-      <span>買う前に要件を書き、候補を比べ、使ったあとに振り返る。</span><span>その記録を置いている。</span>
-    </p>
   </div>
   <section class="posts">
     <h2>記事</h2>
