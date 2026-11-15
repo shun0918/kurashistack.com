@@ -195,3 +195,231 @@ a:hover {
   font-size: 0.9375rem;
   line-height: 1.95;
 }
+
+.post-header {
+  max-width: calc(40rem + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: 4rem var(--gutter) 0;
+}
+
+.post-header .category {
+  margin: 0 0 1.25rem;
+  font-size: 0.8125rem;
+  letter-spacing: 0.14em;
+}
+
+.post-header h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.625rem, 1.1rem + 1.6vw, 2.25rem);
+  font-weight: 500;
+  line-height: 1.55;
+  letter-spacing: 0.04em;
+  word-break: auto-phrase;
+}
+
+.lead {
+  margin: 1.5rem 0 0;
+  color: var(--text-muted);
+  font-size: 1.125rem;
+  line-height: 1.9;
+}
+
+.dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.5rem;
+  margin: 1.75rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+}
+
+.pr-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  width: fit-content;
+  max-width: 100%;
+  margin: 1.25rem 0 0;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--notice-border);
+  border-radius: 4px;
+  background: var(--notice-bg);
+  font-size: 0.8125rem;
+  line-height: 1.7;
+}
+
+.pr-notice svg {
+  flex: none;
+  margin-top: 0.2rem;
+  stroke: var(--accent);
+}
+
+.post-cover {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 3.5rem var(--gutter) 0;
+}
+
+.prose {
+  container-type: inline-size;
+  max-width: calc(40rem + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: 4.5rem var(--gutter) 0;
+  font-size: 1.0625rem;
+  line-height: 2;
+  letter-spacing: 0.04em;
+}
+
+.prose > :first-child {
+  margin-top: 0;
+}
+
+.prose > :last-child {
+  margin-bottom: 0;
+}
+
+.prose p {
+  margin: 0 0 1.8em;
+}
+
+.prose h2 {
+  margin: 4.5rem 0 1.5rem;
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: 0.06em;
+}
+
+.prose h2::before {
+  content: '';
+  display: block;
+  width: 1.5rem;
+  height: 2px;
+  margin-bottom: 1.25rem;
+  background: var(--accent);
+}
+
+.prose h3 {
+  margin: 3rem 0 1rem;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.7;
+  letter-spacing: 0.05em;
+}
+
+.prose ol,
+.prose ul {
+  margin: 0 0 2.25rem;
+  padding-left: 1.6em;
+}
+
+.prose li {
+  margin: 0.5rem 0;
+  padding-left: 0.3em;
+  line-height: 1.9;
+}
+
+.prose li::marker {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.prose em {
+  font-style: normal;
+  -webkit-text-emphasis: sesame var(--accent);
+  text-emphasis: sesame var(--accent);
+}
+
+.prose a {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.35em;
+}
+
+.prose code {
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+  background: var(--code-bg);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.875em;
+}
+
+.prose blockquote {
+  margin: 2.75rem 0;
+  padding: 1.5rem 1.25rem;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  line-height: 1.95;
+}
+
+.prose blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+.prose table {
+  width: 100%;
+  margin: 2.25rem 0 2.75rem;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.prose th {
+  padding: 0.75rem 0.875rem;
+  border-bottom: 1px solid var(--rule-strong);
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-align: left;
+}
+
+.prose td {
+  padding: 0.875rem;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+
+.prose th:first-child,
+.prose td:first-child {
+  padding-left: 0;
+}
+
+.prose th:last-child,
+.prose td:last-child {
+  padding-right: 0;
+}
+
+.prose td:first-child {
+  font-weight: 500;
+}
+
+.prose img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 2.5rem 0;
+  border-radius: 2px;
+}
+
+.prose hr {
+  width: 4rem;
+  margin: 3.5rem auto;
+  border: 0;
+  border-top: 1px solid var(--rule-strong);
+}
+
+@container (max-width: 36rem) {
+  .prose table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
