@@ -1,6 +1,7 @@
 ---
+import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
-import { SITE_DESCRIPTION } from '../consts';
+import { SITE_TAGLINE } from '../consts';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { formatDate } from '../lib/date';
 
@@ -10,21 +11,35 @@ const posts = (await getCollection('posts')).sort(
 ---
 
 <BaseLayout>
-  <p>{SITE_DESCRIPTION}</p>
-  {
-    posts.length === 0 ? (
-      <p>記事はまだありません。</p>
-    ) : (
-      <ul>
-        {posts.map((post) => (
-          <li>
-            <a href={`/posts/${post.id}/`}>{post.data.title}</a>
-            <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
-            {post.data.pr && <span>PR</span>}
-            <p>{post.data.description}</p>
-          </li>
-        ))}
-      </ul>
-    )
-  }
+  <div class="hero">
+    <p class="hero-title">{SITE_TAGLINE.map((phrase) => <span>{phrase}</span>)}</p>
+    <p class="hero-text">
+      <span>買う前に要件を書き、候補を比べ、使ったあとに振り返る。</span><span>その記録を置いている。</span>
+    </p>
+  </div>
+  <section class="posts">
+    <h2>記事</h2>
+    {
+      posts.length === 0 ? (
+        <p>記事はまだありません。</p>
+      ) : (
+        <div class="cards">
+          {posts.map(({ id, data }) => (
+            <article class="card">
+              <a href={`/posts/${id}/`}>
+                {data.cover ? <Image class="cover" src={data.cover} alt="" /> : <div class="cover" />}
+                <div class="card-meta">
+                  {data.category && <span class="category">{data.category}</span>}
+                  <time datetime={data.pubDate.toISOString()}>{formatDate(data.pubDate)}</time>
+                  {data.pr && <span class="pr-tag">PR</span>}
+                </div>
+                <h3>{data.title}</h3>
+                <p>{data.description}</p>
+              </a>
+            </article>
+          ))}
+        </div>
+      )
+    }
+  </section>
 </BaseLayout>
