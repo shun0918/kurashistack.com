@@ -1,0 +1,28 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { formatDate } from '../lib/date';
+import BaseLayout from './BaseLayout.astro';
+
+type Props = CollectionEntry<'posts'>['data'];
+
+const { title, description, pubDate, updatedDate, category, cover, coverAlt, pr } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  <article>
+    <header>
+      <h1>{title}</h1>
+      <p>
+        <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+        {updatedDate && <span>更新 <time datetime={updatedDate.toISOString()}>{formatDate(updatedDate)}</time></span>}
+        {category && <span>{category}</span>}
+      </p>
+      {pr && <p>PR｜この記事には広告（アフィリエイトリンク）が含まれます</p>}
+      {cover && <Image src={cover} alt={coverAlt ?? ''} />}
+    </header>
+    <div class="prose">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>

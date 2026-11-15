@@ -1,13 +1,30 @@
 ---
+import { getCollection } from 'astro:content';
+import { SITE_DESCRIPTION } from '../consts';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { formatDate } from '../lib/date';
+
+const posts = (await getCollection('posts')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
 ---
 
-<html lang="ja">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>暮らしの技術選定</title>
-  </head>
-  <body>
-    <h1>暮らしの技術選定</h1>
-  </body>
-</html>
+<BaseLayout>
+  <p>{SITE_DESCRIPTION}</p>
+  {
+    posts.length === 0 ? (
+      <p>記事はまだありません。</p>
+    ) : (
+      <ul>
+        {posts.map((post) => (
+          <li>
+            <a href={`/posts/${post.id}/`}>{post.data.title}</a>
+            <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+            {post.data.pr && <span>PR</span>}
+            <p>{post.data.description}</p>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</BaseLayout>
