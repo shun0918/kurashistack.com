@@ -1,0 +1,25 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { formatDate } from '../lib/date';
+
+interface Props {
+  id: string;
+  data: CollectionEntry<'posts'>['data'];
+}
+
+const { id, data } = Astro.props;
+---
+
+<article class="card">
+  <a href={`/posts/${id}/`}>
+    {data.cover ? <Image class="cover" src={data.cover} alt="" /> : <div class="cover" />}
+    <div class="card-meta">
+      {data.category && <span class="category">{data.category}</span>}
+      <time datetime={data.pubDate.toISOString()}>{formatDate(data.pubDate)}</time>
+      {data.pr && <span class="pr-tag">PR</span>}
+    </div>
+    <h3>{data.title}</h3>
+    <p>{data.description}</p>
+  </a>
+</article>
