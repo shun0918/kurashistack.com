@@ -26,3 +26,6 @@ pnpm-debug.log*
 # wrangler
 .wrangler/
 .dev.vars*
+
+# drafts: post folders starting with _ stay on the local machine
+src/content/posts/_*/
