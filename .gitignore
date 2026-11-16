@@ -26,3 +26,9 @@ pnpm-debug.log*
 # wrangler
 .wrangler/
 .dev.vars*
+
+# drafts: post folders starting with _ stay on the local machine
+src/content/posts/_*/
+
+# personal Claude Code instructions for this machine
+CLAUDE.local.md
