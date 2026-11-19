@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -17,6 +17,8 @@ afterEach(() => {
 
 // _ で始まる下書きのフォルダ。git には入らない
 function draftFolder() {
+  // 公開済みの記事がまだない clone (CI を含む) には、記事のフォルダがない
+  mkdirSync(POSTS, { recursive: true });
   const dir = mkdtempSync(join(POSTS, '_photo-test-'));
   created.push(dir);
   return dir;
