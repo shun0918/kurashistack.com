@@ -1,4 +1,4 @@
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, statSync, utimesSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { crc32 } from 'node:zlib';
@@ -151,5 +151,36 @@ describe('写真を整える', () => {
     expect((await sharp(file).metadata()).format).toBe('png');
     expect((await pixelAt(file, 2, 8)).a).toBe(255);
     expect((await pixelAt(file, 12, 8)).a).toBe(0);
+  });
+
+  test('すでに整っている写真を渡した時、ファイルを書き換えないこと', async () => {
+    const root = postsRoot();
+    const file = join(root, 'tidy.jpg');
+    writeFileSync(file, await solid(64, 48).jpeg().toBuffer());
+    const past = new Date('2020-01-01T00:00:00Z');
+    utimesSync(file, past, past);
+    const before = readFileSync(file);
+
+    const results = await optimizePhotos([file], root);
+
+    expect(results).toEqual([{ path: file, changed: false }]);
+    expect(readFileSync(file).equals(before)).toBe(true);
+    expect(statSync(file).mtimeMs).toBe(past.getTime());
+  });
+
+  test('整えた写真をもう一度渡した時、ファイルを書き換えないこと', async () => {
+    const root = postsRoot();
+    const file = join(root, 'photo.jpg');
+    writeFileSync(file, await solid(4000, 3000).jpeg().withExif(WITH_GPS).toBuffer());
+    await optimizePhotos([file], root);
+    const once = readFileSync(file);
+    const past = new Date('2020-01-01T00:00:00Z');
+    utimesSync(file, past, past);
+
+    const results = await optimizePhotos([file], root);
+
+    expect(results).toEqual([{ path: file, changed: false }]);
+    expect(readFileSync(file).equals(once)).toBe(true);
+    expect(statSync(file).mtimeMs).toBe(past.getTime());
   });
 });
