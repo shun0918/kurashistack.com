@@ -22,7 +22,7 @@ for (const path of paths) {
 
 if (failures.length > 0) {
   console.error(
-    '画像にメタデータが残っている。JPEG・PNG は exiftool -all= <ファイル>、SVG は該当する要素と属性を消してから、もう一度コミットする。',
+    '画像にメタデータが残っている。記事のフォルダの JPEG・PNG は npm run photo -- <ファイルかフォルダ> で整える。それ以外の画像は exiftool -all= <ファイル>、SVG は該当する要素と属性を消す。直したら、もう一度コミットする。',
   );
   console.error(failures.join('\n'));
   process.exit(1);

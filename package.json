@@ -12,6 +12,7 @@
     "check": "astro check",
     "preview": "wrangler dev",
     "test": "vitest run",
+    "photo": "node scripts/photo.ts",
     "astro": "astro",
     "prepare": "git config core.hooksPath .githooks || true"
   },

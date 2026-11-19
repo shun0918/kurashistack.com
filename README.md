@@ -13,6 +13,7 @@
 | `npm run build` | `dist/` にビルド |
 | `npm run check` | 型チェック |
 | `npm test` | テスト |
+| `npm run photo -- <ファイルかフォルダ>` | 記事の写真の向きを直し、メタデータを消し、長辺 2400px に収める |
 | `npm run preview` | `dist/` を wrangler でローカル配信 |
 
 ## ライセンス
