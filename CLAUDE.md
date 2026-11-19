@@ -7,7 +7,7 @@ Astro（静的出力）+ Cloudflare Workers Static Assets。広告・アフィ�
 
 以下は必ず守る。違反しそうな変更を頼まれたら、実装する前に指摘する。
 
-- **画像の EXIF（特に GPS）を残さない**。自宅で撮った写真が多く、位置情報から住所が特定できるため。リポジトリにコミットする画像は事前にメタデータを除去する（記事の写真は `npm run photo -- <ファイルかフォルダ>`、それ以外は `exiftool -all=` 等。コミット前のフックと CI が、メタデータの残った画像を止める）。git 履歴に一度入ると消すのが困難なので、コミット前に止めることを最優先にする
+- **画像の EXIF（特に GPS）を残さない**。自宅で撮った写真が多く、位置情報から住所が特定できるため。リポジトリにコミットする画像は事前にメタデータを除去する（記事の写真は `pnpm photo <ファイルかフォルダ>`、それ以外は `exiftool -all=` 等。コミット前のフックと CI が、メタデータの残った画像を止める）。git 履歴に一度入ると消すのが困難なので、コミット前に止めることを最優先にする
 - **下書きはコミットしない**。書きかけの記事は `src/content/posts/_<slug>/` に置き（`_` で始まるフォルダは .gitignore 済み）、手元の開発サーバーで読む。公開する時にフォルダ名の `_` を外してコミットする。push した時点で公開される（PR ブランチも公開）
 - シークレット（Cloudflare API トークン等）はコミットしない。AdSense のパブリッシャー ID やアフィリエイトタグは配信 HTML に載るものなので公開して問題ない
 - ライセンスはコードと記事で分ける（`LICENSE` 参照）。コードは MIT、`src/content/` と画像は All rights reserved
@@ -21,9 +21,11 @@ Astro（静的出力）+ Cloudflare Workers Static Assets。広告・アフィ�
 - URL は末尾スラッシュあり（`trailingSlash: 'always'`）。公開後は変えない
 - 画像は記事と同じフォルダに置く（`posts/<slug>/index.md` + `cover.jpg`）
 - `pr: true` の記事には PR 表記を自動表示（ステマ規制対応）。アフィリエイトリンクを含む記事は必ず `pr: true`
+- パッケージマネージャーは pnpm。バージョンは `package.json` の `packageManager` で固定する（Cloudflare のビルドも、この値で pnpm のバージョンを選ぶ）。ロックファイルは `pnpm-lock.yaml` だけを置く（Cloudflare のビルドは、ロックファイルでパッケージマネージャーを決める）
+- 依存のビルドスクリプトは、`pnpm-workspace.yaml` の `allowBuilds` に書いたもの（今は esbuild と workerd）だけ動く。新しい依存で `pnpm install` が `ERR_PNPM_IGNORED_BUILDS` で止まったら、そのスクリプトが要るかを決めて、`allowBuilds` に `true` か `false` で書く
 
 ## コマンド
 
-- `npm run dev` / `npm run build` / `npm run check` / `npm run preview`（wrangler でローカル配信）
-- `npm run photo -- <ファイルかフォルダ>`（記事のフォルダの JPEG・PNG の向きを直し、メタデータを消し、長辺 2400px に収める。HEIC は先に JPEG へ書き出す）
-- 変更後は `npm run check` と `npm run build` が通ることを確認する
+- `pnpm dev` / `pnpm build` / `pnpm check` / `pnpm preview`（wrangler でローカル配信）
+- `pnpm photo <ファイルかフォルダ>`（記事のフォルダの JPEG・PNG の向きを直し、メタデータを消し、長辺 2400px に収める。HEIC は先に JPEG へ書き出す。npm のように `--` は付けない）
+- 変更後は `pnpm check` と `pnpm build` が通ることを確認する
