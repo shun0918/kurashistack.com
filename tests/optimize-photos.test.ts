@@ -1,6 +1,7 @@
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { crc32 } from 'node:zlib';
 import sharp from 'sharp';
 import { afterEach, describe, expect, test } from 'vitest';
 import { inspectImage } from '../scripts/image-metadata.ts';
@@ -26,7 +27,18 @@ const WITH_GPS = { IFD0: { Make: 'Cam' }, IFD3: { GPSLatitudeRef: 'N', GPSLatitu
 async function pixelAt(file: string, x: number, y: number) {
   const { data, info } = await sharp(file).raw().toBuffer({ resolveWithObject: true });
   const i = (y * info.width + x) * info.channels;
-  return { r: data[i] ?? 0, b: data[i + 2] ?? 0 };
+  return { r: data[i] ?? 0, b: data[i + 2] ?? 0, a: info.channels === 4 ? (data[i + 3] ?? 0) : 255 };
+}
+
+function withPngText(png: Buffer, keyword: string, text: string) {
+  const type = Buffer.from('tEXt', 'latin1');
+  const data = Buffer.from(`${keyword}\0${text}`, 'latin1');
+  const length = Buffer.alloc(4);
+  length.writeUInt32BE(data.length);
+  const crc = Buffer.alloc(4);
+  crc.writeUInt32BE(crc32(Buffer.concat([type, data])));
+  const iend = png.length - 12;
+  return Buffer.concat([png.subarray(0, iend), length, type, data, crc, png.subarray(iend)]);
 }
 
 describe('写真を整える', () => {
@@ -117,5 +129,27 @@ describe('写真を整える', () => {
     expect(await inspectImage(file, readFileSync(file))).toEqual([]);
     const meta = await sharp(file).metadata();
     expect([meta.width, meta.height]).toEqual([width, height]);
+  });
+
+  test('生成 AI のプロンプトなどの文字情報入りの PNG を渡した時、文字情報が消え、透明な部分が残ること', async () => {
+    const root = postsRoot();
+    const file = join(root, 'cover.png');
+    // 左半分だけ不透明の赤、右半分は透明 (16×16)
+    const red = await sharp({ create: { width: 8, height: 16, channels: 4, background: { r: 255, g: 0, b: 0, alpha: 1 } } })
+      .png()
+      .toBuffer();
+    const png = await sharp({ create: { width: 16, height: 16, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+      .composite([{ input: red, left: 0, top: 0 }])
+      .png()
+      .toBuffer();
+    writeFileSync(file, withPngText(png, 'parameters', 'minimal line drawing of a desk'));
+    expect(await inspectImage(file, readFileSync(file))).toContain('PNG のテキスト情報');
+
+    await optimizePhotos([file], root);
+
+    expect(await inspectImage(file, readFileSync(file))).toEqual([]);
+    expect((await sharp(file).metadata()).format).toBe('png');
+    expect((await pixelAt(file, 2, 8)).a).toBe(255);
+    expect((await pixelAt(file, 12, 8)).a).toBe(0);
   });
 });
