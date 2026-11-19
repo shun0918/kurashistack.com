@@ -1,6 +1,6 @@
-import { mkdtempSync, readFileSync, rmSync, statSync, utimesSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, utimesSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { crc32 } from 'node:zlib';
 import sharp from 'sharp';
 import { afterEach, describe, expect, test } from 'vitest';
@@ -12,10 +12,12 @@ afterEach(() => {
   for (const dir of created.splice(0)) rmSync(dir, { recursive: true, force: true });
 });
 
-// 記事のフォルダ (src/content/posts) に見立てた一時フォルダ
+// 記事のフォルダ (src/content/posts) に見立てた一時フォルダ。同じ階層に、その外のフォルダを作れる
 function postsRoot() {
-  const root = mkdtempSync(join(tmpdir(), 'photo-'));
-  created.push(root);
+  const base = mkdtempSync(join(tmpdir(), 'photo-'));
+  created.push(base);
+  const root = join(base, 'posts');
+  mkdirSync(root);
   return root;
 }
 
@@ -182,5 +184,83 @@ describe('写真を整える', () => {
     expect(results).toEqual([{ path: file, changed: false }]);
     expect(readFileSync(file).equals(once)).toBe(true);
     expect(statSync(file).mtimeMs).toBe(past.getTime());
+  });
+
+  test('フォルダを渡した時、中の JPEG と PNG だけを整え、ほかのファイルは変えないこと', async () => {
+    const root = postsRoot();
+    const post = join(root, '_my-post');
+    mkdirSync(join(post, 'extra'), { recursive: true });
+    const photos = [join(post, 'a.jpg'), join(post, 'B.JPG'), join(post, 'extra', 'c.jpeg')];
+    for (const photo of photos) writeFileSync(photo, await solid(64, 48).jpeg().withExif(WITH_GPS).toBuffer());
+    const png = join(post, 'cover.png');
+    writeFileSync(png, withPngText(await solid(16, 16).png().toBuffer(), 'parameters', 'a desk'));
+    const webp = join(post, 'd.webp');
+    writeFileSync(webp, await solid(64, 48).webp().withExif(WITH_GPS).toBuffer());
+    const note = join(post, 'index.md');
+    writeFileSync(note, '# 下書き\n');
+    const [webpBefore, noteBefore] = [readFileSync(webp), readFileSync(note)];
+
+    const results = await optimizePhotos([post], root);
+
+    expect(results.map((result) => result.path).sort()).toEqual([...photos, png].sort());
+    for (const file of [...photos, png]) expect(await inspectImage(file, readFileSync(file))).toEqual([]);
+    expect(readFileSync(webp).equals(webpBefore)).toBe(true);
+    expect(readFileSync(note).equals(noteBefore)).toBe(true);
+  });
+
+  test('HEIC を渡した時、JPEG に書き出してから使うよう伝えて失敗し、ファイルを変えないこと', async () => {
+    const root = postsRoot();
+    const heic = join(root, 'IMG_0001.HEIC');
+    writeFileSync(heic, 'anything');
+
+    await expect(optimizePhotos([heic], root)).rejects.toThrow(/JPEG/);
+
+    expect(readFileSync(heic, 'utf8')).toBe('anything');
+  });
+
+  test('フォルダの中に HEIC がある時、JPEG も含めて何も変えずに失敗すること', async () => {
+    const root = postsRoot();
+    const post = join(root, '_my-post');
+    mkdirSync(post);
+    const jpeg = join(post, 'a.jpg');
+    writeFileSync(jpeg, await solid(64, 48).jpeg().withExif(WITH_GPS).toBuffer());
+    writeFileSync(join(post, 'IMG_0001.heic'), 'anything');
+    const before = readFileSync(jpeg);
+
+    await expect(optimizePhotos([post], root)).rejects.toThrow(/JPEG/);
+
+    expect(readFileSync(jpeg).equals(before)).toBe(true);
+  });
+
+  test.each([
+    { kind: '外のファイル', target: (root: string) => join(dirname(root), 'outside', 'photo.jpg') },
+    { kind: '外のフォルダ', target: (root: string) => join(dirname(root), 'outside') },
+    { kind: '名前の先頭が同じ別のフォルダ', target: (root: string) => join(dirname(root), 'posts-draft') },
+    { kind: '.. をたどって外に出るパス', target: (root: string) => `${root}/../outside/photo.jpg` },
+  ])('記事のフォルダの外を渡した時 ($kind)、何も変えずに失敗すること', async ({ target }) => {
+    const root = postsRoot();
+    const before = [];
+    for (const dir of ['outside', 'posts-draft']) {
+      const photo = join(dirname(root), dir, 'photo.jpg');
+      mkdirSync(dirname(photo));
+      writeFileSync(photo, await solid(64, 48).jpeg().withExif(WITH_GPS).toBuffer());
+      before.push({ photo, content: readFileSync(photo) });
+    }
+
+    await expect(optimizePhotos([target(root)], root)).rejects.toThrow(/記事のフォルダ/);
+
+    for (const { photo, content } of before) expect(readFileSync(photo).equals(content)).toBe(true);
+  });
+
+  test('記事のフォルダの外のファイルが混ざっている時、中のファイルも含めて何も変えずに失敗すること', async () => {
+    const root = postsRoot();
+    const inside = join(root, 'photo.jpg');
+    const outside = join(dirname(root), 'outside.jpg');
+    for (const file of [inside, outside]) writeFileSync(file, await solid(64, 48).jpeg().withExif(WITH_GPS).toBuffer());
+    const before = readFileSync(inside);
+
+    await expect(optimizePhotos([inside, outside], root)).rejects.toThrow(/記事のフォルダ/);
+
+    expect(readFileSync(inside).equals(before)).toBe(true);
   });
 });
