@@ -28,9 +28,9 @@ const jpeg = () => sharp({ create: { width: 64, height: 48, channels: 3, backgro
 const exifJpeg = () => jpeg().withExif({ IFD0: { Make: 'Cam' } }).toBuffer();
 
 const photo = (...args: string[]) =>
-  spawnSync('npm', ['run', '--silent', 'photo', '--', ...args], { cwd: ROOT, encoding: 'utf8' });
+  spawnSync('pnpm', ['--silent', 'photo', ...args], { cwd: ROOT, encoding: 'utf8' });
 
-describe('npm run photo', () => {
+describe('pnpm photo', () => {
   test('記事のフォルダの写真を渡した時、整えたと伝えて終了コード 0 で終わること', async () => {
     const file = join(draftFolder(), 'photo.jpg');
     writeFileSync(file, await exifJpeg());
@@ -66,7 +66,7 @@ describe('npm run photo', () => {
     const run = photo();
 
     expect(run.status).toBe(1);
-    expect(run.stderr).toContain('使い方: npm run photo');
+    expect(run.stderr).toContain('使い方: pnpm photo');
   });
 
   test('記事のフォルダの外のファイルを渡した時、終了コード 1 で終わり、ファイルを変えないこと', async () => {

@@ -6,7 +6,7 @@ const postsRoot = fileURLToPath(new URL('../src/content/posts', import.meta.url)
 const targets = process.argv.slice(2);
 
 if (targets.length === 0) {
-  console.error('使い方: npm run photo -- <ファイルかフォルダ>');
+  console.error('使い方: pnpm photo <ファイルかフォルダ>');
   process.exit(1);
 }
 
