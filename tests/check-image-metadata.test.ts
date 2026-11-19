@@ -43,9 +43,9 @@ describe('pre-commit フック', () => {
     expect(commitWithHook(git).status).toBe(0);
   });
 
-  test('メタデータ付きの画像で止まった時、npm run photo での直し方を伝えること', async () => {
+  test('メタデータ付きの画像で止まった時、pnpm photo での直し方を伝えること', async () => {
     const { git } = repoWith({ 'photo.jpg': await exifJpeg() });
-    expect(commitWithHook(git).stderr).toContain('npm run photo');
+    expect(commitWithHook(git).stderr).toContain('pnpm photo');
   });
 });
 
